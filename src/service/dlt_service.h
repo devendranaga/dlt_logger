@@ -1,16 +1,19 @@
+#ifndef __AUTO_MIDDLEWARE_DLT_SERVICE_H__
+#define __AUTO_MIDDLEWARE_DLT_SERVICE_H__
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
 #include <auto_lib.h>
-#include <dlt_header.h>
+#include <dlt_enc_dec.h>
 
 namespace auto_os::middleware {
 
-class dlt_logger  {
+class dlt_service {
     public:
-        explicit dlt_logger() noexcept;
-        ~dlt_logger();
+        explicit dlt_service() noexcept;
+        ~dlt_service();
 
         void run();
 
@@ -21,4 +24,6 @@ class dlt_logger  {
 };
 
 }
+
+#endif
 

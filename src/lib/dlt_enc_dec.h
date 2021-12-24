@@ -1,13 +1,13 @@
-#ifndef __AUTO_OS_MIDDLEWARE_DLT_HEADER_H__
-#define __AUTO_OS_MIDDLEWARE_DLT_HEADER_H__
+#ifndef __AUTO_OS_MIDDLEWARE_DLT_ENCDEC_H__
+#define __AUTO_OS_MIDDLEWARE_DLT_ENCDEC_H__
 
 namespace auto_os::middleware {
 
-#define DLT_HDR_TYPE_USE_EXT_HEADER 0x80
-#define DLT_HDR_TYPE_MSB_FIRST 0x40
-#define DLT_HDR_TYPE_WITH_ECU_ID 0x20
-#define DLT_HDR_TYPE_WITH_SESSION_ID 0x10
-#define DLT_HDT_TYPE_WITH_TIMESTAMP 0x08
+#define DLT_HDR_TYPE_USE_EXT_HEADER     0x80
+#define DLT_HDR_TYPE_MSB_FIRST          0x40
+#define DLT_HDR_TYPE_WITH_ECU_ID        0x20
+#define DLT_HDR_TYPE_WITH_SESSION_ID    0x10
+#define DLT_HDT_TYPE_WITH_TIMESTAMP     0x08
 
 struct dlt_standard_header {
     /**

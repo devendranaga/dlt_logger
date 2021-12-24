@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <dlt_header.h>
+#include <dlt_enc_dec.h>
 
 namespace auto_os::middleware {
 
@@ -13,7 +13,7 @@ int dlt_standard_header::encode(uint8_t *buff, size_t buff_size, size_t &off)
 
 int dlt_standard_header::decode(uint8_t *buff, size_t buff_size, size_t &off)
 {
-    return -;
+    return -1;
 }
 
 }
