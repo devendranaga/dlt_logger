@@ -1,11 +1,11 @@
 {
     "htype_use_extended_hdr": true,
-    "htype_msb_first": true,
+    "htype_msb_first": false,
     "htype_send_ecu_id": true,
     "htype_send_timestamp": true,
     "htype_ecu_id": "ecu1",
-    "htype_version": 0,
-    "ext_hdr_verbose_mode": 0,
+    "htype_version": 1,
+    "ext_hdr_verbose_mode": true,
     "network": {
         "socket_type": "unix",
         "unix_socket": {

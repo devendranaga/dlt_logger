@@ -11,6 +11,13 @@ namespace auto_os::middleware {
 #define DLT_HDR_TYPE_WITH_SESSION_ID    0x08
 #define DLT_HDR_TYPE_WITH_TIMESTAMP     0x10
 
+#define SET_4_BYTES(__left, __right) {\
+    __left[0] = __right[0];\
+    __left[1] = __right[1];\
+    __left[2] = __right[2];\
+    __left[3] = __right[3];\
+}
+
 struct dlt_standard_header {
     /**
      * | UEH | MSBF | WEID | WTMS | VERS      |
@@ -89,6 +96,8 @@ struct dlt_standard_header {
     inline void set_valid_timestamp() { header_type |= DLT_HDR_TYPE_WITH_TIMESTAMP; }
     inline void set_version(int version) { header_type |= (version << 5); }
     inline void set_msg_counter(int msg_count) { msg_counter = msg_count; }
+    inline void set_ecu_id(const std::string ecuid) { SET_4_BYTES(ecu_id, ecuid); }
+    inline void set_session_id(uint8_t *sess_id) { SET_4_BYTES(session_id, sess_id); }
     inline bool has_ecu_id() { return !!(header_type & DLT_HDR_TYPE_WITH_ECU_ID); }
     inline bool has_session_id() { return !!(header_type & DLT_HDR_TYPE_WITH_SESSION_ID); }
     inline bool has_timestamp() { return !!(header_type & DLT_HDR_TYPE_WITH_TIMESTAMP); }

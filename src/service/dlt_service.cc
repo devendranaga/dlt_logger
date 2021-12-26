@@ -13,7 +13,20 @@ int dlt_config::parse(const std::string config_file)
 
     conf >> root;
 
+    use_ext_hdr = root["htype_use_extended_hdr"].asBool();
+    use_msb_first = root["htype_msb_first"].asBool();
+    send_ecu_id = root["htype_send_ecu_id"].asBool();
+    send_timestamp = root["htype_send_timestamp"].asBool();
+    version = root["htype_version"].asInt();
+    verbose_mode = root["ext_hdr_verbose_mode"].asBool();
     ecu_id = root["htype_ecu_id"].asString();
+    auto socket_type = root["network"]["socket_type"].asString();
+    if (socket_type == "unix") {
+        conn_type = network_conn_type::UNIX;
+    } else if (socket_type == "udpv4") {
+        conn_type = network_conn_type::UDP;
+    }
+
     unix_server_path = root["network"]["unix_socket"]["server_path"].asString();
     storage_service_addr = root["network"]["storage_server"]["server_address"].asString();
     storage_service_port = root["network"]["storage_server"]["server_port"].asInt();
@@ -96,6 +109,7 @@ void dlt_service::process_received_message()
 
                 dlt_msg_if *rx_msg = (dlt_msg_if *)msg.rx_msg;
 
+                printf("session id %x.%x.%x.%x\n", rx_msg->session_id[0], rx_msg->session_id[1], rx_msg->session_id[2], rx_msg->session_id[3]);
                 dlt_header hdr;
                 uint8_t tx_buf[1024];
                 size_t off = 0;
@@ -106,6 +120,8 @@ void dlt_service::process_received_message()
                 hdr.std_hdr.set_valid_session_id();
                 hdr.std_hdr.set_version(1);
                 hdr.std_hdr.set_msg_counter(msg_counter_);
+                hdr.std_hdr.set_ecu_id(config->ecu_id);
+                hdr.std_hdr.set_session_id(rx_msg->session_id);
 
                 hdr.ext_hdr.set_verbose();
                 switch (rx_msg->dlt_log_lvl) {

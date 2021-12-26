@@ -1,3 +1,12 @@
+/**
+ * @file dlt_service.h
+ * @author Devendra Naga (devendra.aaru@outlook.com)
+ * @brief Implements dlt service
+ * @version 0.1
+ * @date 2021-12-26
+ * 
+ * @copyright Copyright (c) 2021-present All rights reserved
+ */
 #ifndef __AUTO_MIDDLEWARE_DLT_SERVICE_H__
 #define __AUTO_MIDDLEWARE_DLT_SERVICE_H__
 
@@ -12,20 +21,35 @@
 #include <auto_lib.h>
 #include <dlt_enc_dec.h>
 
+// maximum message counter
 #define MSG_COUNTER_MAX_UINT 255
+
+// DLT configuration file
 #define DLT_CONFIG_FILE "./dlt_config.json"
 
 namespace auto_os::middleware {
 
+/**
+ * @brief type of dlt service network (unix domain or udp)
+ * 
+ */
 enum class network_conn_type {
     UNIX,
     UDP,
 };
 
 struct dlt_config {
+    bool use_ext_hdr;
+    bool use_msb_first;
+    bool send_ecu_id;
+    bool send_timestamp;
+    int version;
+    bool verbose_mode;
     std::string ecu_id;
     network_conn_type conn_type;
     std::string unix_server_path;
+    std::string udpv4_server_address;
+    int udpv4_server_port;
     std::string storage_service_addr;
     int storage_service_port;
 
@@ -41,6 +65,12 @@ struct dlt_config {
         return &config;
     }
 
+    /**
+     * @brief - parse configuration file
+     * 
+     * @param in config_file - configuration file
+     * @return out returns 0 on success -1 on failure
+     */
     int parse(const std::string config_file);
 
     private:
