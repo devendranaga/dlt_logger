@@ -16,6 +16,7 @@ int dlt_lib::connect(const std::string dlt_server_addr, uint8_t *session_id)
 
     rg->get(rand_val);
 
+    //  create custom client socket with random id
     snprintf(client_path, sizeof(client_path), "/tmp/dlt_client_%u.sock",
                                                 rand_val);
     client_path_ = std::string(client_path);
@@ -24,16 +25,66 @@ int dlt_lib::connect(const std::string dlt_server_addr, uint8_t *session_id)
     return 0;
 }
 
+dlt_lib::~dlt_lib()
+{
+    remove(client_path_.c_str());
+}
+
+void dlt_lib::disconnect()
+{
+    remove(client_path_.c_str());
+}
+
+void dlt_lib::fatal(const std::string app_id, const std::string ctx_id, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    send_dlt_msg(app_id, ctx_id, DLT_MSG_LOG_LVL_FATAL, fmt, ap);
+    va_end(ap);
+}
+
+void dlt_lib::error(const std::string app_id, const std::string ctx_id, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    send_dlt_msg(app_id, ctx_id, DLT_MSG_LOG_LVL_ERROR, fmt, ap);
+    va_end(ap);
+}
+
+void dlt_lib::verbose(const std::string app_id, const std::string ctx_id, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    send_dlt_msg(app_id, ctx_id, DLT_MSG_LOG_LVL_VERBOSE, fmt, ap);
+    va_end(ap);
+}
+
+void dlt_lib::warning(const std::string app_id, const std::string ctx_id, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    send_dlt_msg(app_id, ctx_id, DLT_MSG_LOG_LVL_WARNING, fmt, ap);
+    va_end(ap);
+}
+
 void dlt_lib::info(const std::string app_id, const std::string ctx_id, const char *fmt, ...)
 {
     va_list ap;
 
     va_start(ap, fmt);
-    send_dlt_msg(app_id, ctx_id, fmt, ap);
+    send_dlt_msg(app_id, ctx_id, DLT_MSG_LOG_LVL_INFO, fmt, ap);
     va_end(ap);
 }
 
-void dlt_lib::send_dlt_msg(const std::string app_id, const std::string ctx_id, const char *fmt, va_list ap)
+void dlt_lib::send_dlt_msg(const std::string app_id,
+                           const std::string ctx_id,
+                           dlt_msg_log_lvl log_lvl,
+                           const char *fmt,
+                           va_list ap)
 {
     char *data[4096];
     dlt_msg_if *msg = (dlt_msg_if *)data;
@@ -42,7 +93,7 @@ void dlt_lib::send_dlt_msg(const std::string app_id, const std::string ctx_id, c
     SET_4_BYTES(msg->app_id, app_id);
     SET_4_BYTES(msg->ctx_id, ctx_id);
     SET_4_BYTES(msg->session_id, session_id_);
-    msg->dlt_log_lvl = DLT_MSG_LOG_LVL_INFO;
+    msg->dlt_log_lvl = log_lvl;
     msg->dlt_msg_type_info = DLT_MSG_TYPEINFO_STRG;
 
     len = vsnprintf(msg->dlt_msg, sizeof(data) - sizeof(dlt_msg_if), fmt, ap);

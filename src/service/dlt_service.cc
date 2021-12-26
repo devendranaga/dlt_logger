@@ -105,11 +105,9 @@ void dlt_service::process_received_message()
             int q_len = rx_msg_list_.size();
             while (q_len > 0) {
                 dlt_rx_msg msg = rx_msg_list_.front();
-                rx_msg_list_.pop();
 
                 dlt_msg_if *rx_msg = (dlt_msg_if *)msg.rx_msg;
 
-                printf("session id %x.%x.%x.%x\n", rx_msg->session_id[0], rx_msg->session_id[1], rx_msg->session_id[2], rx_msg->session_id[3]);
                 dlt_header hdr;
                 uint8_t tx_buf[1024];
                 size_t off = 0;
@@ -124,16 +122,42 @@ void dlt_service::process_received_message()
                 hdr.std_hdr.set_session_id(rx_msg->session_id);
 
                 hdr.ext_hdr.set_verbose();
+                hdr.ext_hdr.set_app_id(rx_msg->app_id);
+                hdr.ext_hdr.set_context_id(rx_msg->ctx_id);
                 switch (rx_msg->dlt_log_lvl) {
                     case DLT_MSG_LOG_LVL_INFO:
                         hdr.ext_hdr.set_msg_type(
                             dlt_extended_header_msg_type::eDLT_TYPE_LOG);
                         hdr.ext_hdr.set_msg_type_info_log(
                             dlt_extended_header_msg_type_info_log::eDLT_LOG_INFO);
-                        hdr.ext_hdr.set_app_id(rx_msg->app_id);
-                        hdr.ext_hdr.set_context_id(rx_msg->ctx_id);
+                    break;
+                    case DLT_MSG_LOG_LVL_WARNING:
+                        hdr.ext_hdr.set_msg_type(
+                            dlt_extended_header_msg_type::eDLT_TYPE_LOG);
+                        hdr.ext_hdr.set_msg_type_info_log(
+                            dlt_extended_header_msg_type_info_log::eDLT_LOG_WARN);
+                    break;
+                    case DLT_MSG_LOG_LVL_VERBOSE:
+                        hdr.ext_hdr.set_msg_type(
+                            dlt_extended_header_msg_type::eDLT_TYPE_LOG);
+                        hdr.ext_hdr.set_msg_type_info_log(
+                            dlt_extended_header_msg_type_info_log::eDLT_LOG_VERBOSE);
+                    break;
+                    case DLT_MSG_LOG_LVL_ERROR:
+                        hdr.ext_hdr.set_msg_type(
+                            dlt_extended_header_msg_type::eDLT_TYPE_LOG);
+                        hdr.ext_hdr.set_msg_type_info_log(
+                            dlt_extended_header_msg_type_info_log::eDLT_LOG_ERROR);
+                    break;
+                    case DLT_MSG_LOG_LVL_FATAL:
+                        hdr.ext_hdr.set_msg_type(
+                            dlt_extended_header_msg_type::eDLT_TYPE_LOG);
+                        hdr.ext_hdr.set_msg_type_info_log(
+                            dlt_extended_header_msg_type_info_log::eDLT_LOG_FATAL);
                     break;
                     default:
+                        rx_msg_list_.pop();
+                        q_len = rx_msg_list_.size();
                     continue;
                 }
 
@@ -146,7 +170,9 @@ void dlt_service::process_received_message()
 
                 inc_msg_counter();
 
+                rx_msg_list_.pop();
                 q_len = rx_msg_list_.size();
+                printf("q len %d\n", q_len);
             }
         }
     }

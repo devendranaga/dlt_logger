@@ -12,5 +12,9 @@ int main(int argc, char **argv)
     log = auto_os::middleware::dlt_lib::instance();
     log->connect("/tmp/dlt.sock", (uint8_t *)(session_id.c_str()));
     log->info(app_id, context_id, "testing dlt message\n");
+    log->warning(app_id, context_id, "testing dlt message\n");
+    log->verbose(app_id, context_id, "testing dlt message\n");
+    log->error(app_id, context_id, "testing dlt message\n");
+    log->fatal(app_id, context_id, "testing dlt message\n");
 }
 

@@ -19,7 +19,7 @@ namespace auto_os::middleware {
 
 class dlt_lib {
     public:
-        ~dlt_lib() { }
+        ~dlt_lib();
 
         dlt_lib(const dlt_lib &) = delete;
         const dlt_lib &operator=(const dlt_lib &) = delete;
@@ -38,6 +38,8 @@ class dlt_lib {
                     int dlt_port,
                     uint8_t *session_id);
 
+        void disconnect();
+
         void info(const std::string app_id, const std::string ctx_id, const char *fmt, ...);
         void warning(const std::string app_id, const std::string ctx_id, const char *fmt, ...);
         void verbose(const std::string app_id, const std::string ctx_id, const char *fmt, ...);
@@ -50,7 +52,11 @@ class dlt_lib {
         std::string server_path_;
         std::string client_path_;
         std::unique_ptr<auto_os::lib::unix_udp_client> client_;
-        void send_dlt_msg(const std::string app_id, const std::string ctx_id, const char *fmt, va_list ap);
+        void send_dlt_msg(const std::string app_id,
+                          const std::string ctx_id,
+                          dlt_msg_log_lvl log_lvl,
+                          const char *fmt,
+                          va_list ap);
 };
 
 }

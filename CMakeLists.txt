@@ -31,5 +31,5 @@ add_library(dlt_enc_dec ${DLT_ENCDEC_SRC})
 add_library(dlt_lib ${DLT_LIB_SRC})
 
 add_executable(dlt_test ${DLT_TEST_SRC})
-target_link_libraries(dlt_test auto_lib pthread dlt_lib)
+target_link_libraries(dlt_test dlt_lib auto_lib pthread)
 
