@@ -1,0 +1,24 @@
+{
+    "htype_use_extended_hdr": true,
+    "htype_msb_first": true,
+    "htype_send_ecu_id": true,
+    "htype_send_timestamp": true,
+    "htype_ecu_id": "ecu1",
+    "htype_version": 0,
+    "ext_hdr_verbose_mode": 0,
+    "network": {
+        "socket_type": "unix",
+        "unix_socket": {
+            "server_path": "/tmp/dlt.sock"
+        },
+        "udpv4_socket": {
+            "server_address": "192.168.1.1",
+            "server_port": 2224
+        },
+        "storage_server": {
+            "server_address": "192.168.1.6",
+            "server_port": 2225
+        }
+    }
+}
+
