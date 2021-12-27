@@ -52,6 +52,7 @@ struct dlt_config {
     int udpv4_server_port;
     std::string storage_service_addr;
     int storage_service_port;
+    bool log_to_console;
 
     ~dlt_config() { }
     dlt_config(const dlt_config &) = delete;
@@ -80,6 +81,11 @@ struct dlt_config {
 struct dlt_rx_msg {
     uint8_t rx_msg[4096];
     int rx_msg_len;
+};
+
+struct dlt_encoded_msg {
+    uint8_t enc_msg[4096];
+    int enc_msg_len;
 };
 
 class dlt_service {
@@ -116,8 +122,36 @@ class dlt_service {
                 ecu_id_[i] = config->ecu_id[i];
             }
         }
+        /**
+         * @brief receive dlt message
+         * 
+         * @param in fd socket descriptor
+         */
         void receive_dlt_message(int fd);
+
+        /**
+         * @brief process received message
+         */
         void process_received_message();
+
+        /**
+         * @brief log to console
+         * 
+         * @param in loglvl log level
+         * @param in ecu_id ecu_id string
+         * @param in msg_count msg counter
+         * @param in app_id application id
+         * @param in ctx_id context id
+         * @param in str message string
+         * @param in str_len length of the string
+         */
+        void log_console(uint8_t loglvl,
+                         uint8_t *ecu_id,
+                         uint16_t msg_count,
+                         uint8_t *app_id,
+                         uint8_t *ctx_id,
+                         const char *str,
+                         int str_len);
         auto_os::lib::event_manager *evt_mgr_;
         std::shared_ptr<auto_os::lib::logger> log_;
         std::shared_ptr<auto_os::lib::unix_udp_server> server_;
@@ -125,6 +159,7 @@ class dlt_service {
         uint8_t msg_counter_;
         uint8_t ecu_id_[4];
         std::queue<dlt_rx_msg> rx_msg_list_;
+        std::queue<dlt_encoded_msg> enc_msg_list_;
         std::unique_ptr<std::thread> process_msg_thr_;
         std::mutex rx_msg_q_lock_;
 };

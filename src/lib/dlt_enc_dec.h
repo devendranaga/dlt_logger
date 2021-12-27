@@ -1,3 +1,13 @@
+/**
+ * @file dlt_enc_dec.h
+ * @author Devendra Naga (devendra.aaru@outlook.com)
+ * @brief implements dlt encode and decode
+ * @version 0.1
+ * @date 2021-12-27
+ * 
+ * @copyright Copyright (c) 2021-present All rights reserved
+ * 
+ */
 #ifndef __AUTO_OS_MIDDLEWARE_DLT_ENCDEC_H__
 #define __AUTO_OS_MIDDLEWARE_DLT_ENCDEC_H__
 
@@ -80,6 +90,16 @@ struct dlt_standard_header {
 
     dlt_standard_header()
     {
+        set_defaults();
+    }
+
+    ~dlt_standard_header() { }
+
+    /**
+     * @brief Set the defaults object
+     */
+    inline void set_defaults()
+    {
         header_type = 0;
         msg_counter = 0;
         length = 0;
@@ -87,18 +107,74 @@ struct dlt_standard_header {
         session_id[0] = session_id[1] = session_id[2] = session_id[3] = 0;
         timestamp = 0;
     }
-    ~dlt_standard_header() { }
 
+    /**
+     * @brief Set the use ext hdr object
+     */
     inline void set_use_ext_hdr() { header_type |= DLT_HDR_TYPE_USE_EXT_HEADER; }
+
+    /**
+     * @brief Set the msb first object
+     */
     inline void set_msb_first() { header_type |= DLT_HDR_TYPE_MSB_FIRST; }
+
+    /**
+     * @brief Set the valid ecu id object
+     */
     inline void set_valid_ecu_id() { header_type |= DLT_HDR_TYPE_WITH_ECU_ID; }
+
+    /**
+     * @brief Set the valid session id object
+     */
     inline void set_valid_session_id() { header_type |= DLT_HDR_TYPE_WITH_SESSION_ID; }
+
+    /**
+     * @brief Set the valid timestamp object
+     */
     inline void set_valid_timestamp() { header_type |= DLT_HDR_TYPE_WITH_TIMESTAMP; }
+
+    /**
+     * @brief Set the version object
+     * 
+     * @param in version value of version
+     */
     inline void set_version(int version) { header_type |= (version << 5); }
+
+    /**
+     * @brief Set the msg counter object
+     * 
+     * @param in msg_count value of msg_count
+     */
     inline void set_msg_counter(int msg_count) { msg_counter = msg_count; }
+
+    /**
+     * @brief Set the ecu id object
+     * 
+     * @param in ecuid value of ecuid
+     */
     inline void set_ecu_id(const std::string ecuid) { SET_4_BYTES(ecu_id, ecuid); }
+
+    /**
+     * @brief Set the session id object
+     * 
+     * @param in sess_id value of session_id
+     */
     inline void set_session_id(uint8_t *sess_id) { SET_4_BYTES(session_id, sess_id); }
+
+    /**
+     * @brief check if ecu_id is set
+     * 
+     * @return true if ecu id is set
+     * @return false if ecu id is not set
+     */
     inline bool has_ecu_id() { return !!(header_type & DLT_HDR_TYPE_WITH_ECU_ID); }
+
+    /**
+     * @brief check if session_id is set
+     * 
+     * @return true if session id is set
+     * @return false 
+     */
     inline bool has_session_id() { return !!(header_type & DLT_HDR_TYPE_WITH_SESSION_ID); }
     inline bool has_timestamp() { return !!(header_type & DLT_HDR_TYPE_WITH_TIMESTAMP); }
     inline bool has_ext_hdr() { return !!(header_type & DLT_HDR_TYPE_USE_EXT_HEADER); }
@@ -184,13 +260,18 @@ struct dlt_extended_header {
 
     dlt_extended_header()
     {
+        set_defaults();
+    }
+
+    ~dlt_extended_header() { }
+
+    inline void set_defaults()
+    {
         message_info = 0;
         number_of_args = 0;
         app_id[0] = app_id[1] = app_id[2] = app_id[3] = 0;
         context_id[0] = context_id[1] = context_id[2] = context_id[3] = 0;
     }
-
-    ~dlt_extended_header() { }
 
 #define DLT_EXT_HDR_MSG_INFO_VERBOSE 0x01
 
@@ -299,7 +380,6 @@ struct dlt_header {
                    DLT_EXT_HDR_CTX_ID_LEN;
         }
 
-        printf("msg type info %d DLT_MSG_TYPEINFO_STRG %d\n", msg_type_info, DLT_MSG_TYPEINFO_STRG);
         switch (msg_type_info) {
             case DLT_MSG_TYPEINFO_STRG: // 4 bytes is the length of typeinfo
                 len += 4;
@@ -312,7 +392,6 @@ struct dlt_header {
         len += 2;
         len += payload_len;
 
-        printf("len %d\n", len);
         return len;
     }
     int encode(uint8_t *payload, uint16_t payload_len, uint8_t *buff, size_t buff_size, size_t &off);

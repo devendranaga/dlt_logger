@@ -60,7 +60,6 @@ int dlt_header::encode(uint8_t *payload, uint16_t payload_len, uint8_t *buff, si
     SET_BYTE(std_hdr.msg_counter, buff, off);
 
     len = auto_os::lib::bswap16b(get_length(payload_len + 1));
-    printf("length %d\n", len);
     SET_BYTES(len, 2, buff, off);
 
     if (std_hdr.has_ecu_id()) {
