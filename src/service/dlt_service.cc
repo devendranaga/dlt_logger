@@ -7,6 +7,7 @@
  * 
  * @copyright Copyright (c) 2021-present All rights reserved
  */
+#include <getopt.h>
 #include <fstream>
 #include <string.h>
 #include <functional>
@@ -45,14 +46,18 @@ int dlt_config::parse(const std::string config_file)
     return 0;
 }
 
-dlt_service::dlt_service() noexcept
+dlt_service::dlt_service(std::string &filename)
 {
     dlt_config *config;
     int ret;
 
+    if (filename.length() == 0) {
+        filename = DLT_CONFIG_FILE;
+    }
+
     // parse configuration
     config = dlt_config::instance();
-    ret = config->parse(DLT_CONFIG_FILE);
+    ret = config->parse(filename);
     if (ret < 0) {
         throw std::runtime_error("failed to parse dlt config file");
     }
@@ -267,9 +272,29 @@ void dlt_service::run()
 
 }
 
-int main()
+static void usage(const char *progname)
 {
-    auto_os::middleware::dlt_service logger;
+    fprintf(stderr, "<%s> <-f configuration file>\n", progname);
+}
+
+int main(int argc, char **argv)
+{
+    std::string filename = "";
+    int ret;
+
+    while ((ret = getopt(argc, argv, "f:")) != -1) {
+        switch (ret) {
+            // take configuration file as input
+            case 'f':
+                filename = std::string(optarg);
+            break;
+            default:
+                usage(argv[0]);
+                return -1;
+        }
+    }
+
+    auto_os::middleware::dlt_service logger(filename);
 
     logger.run();
 }

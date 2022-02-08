@@ -38,6 +38,9 @@ enum class network_conn_type {
     UDP,
 };
 
+/**
+ * @brief - dlt configuration
+ */
 struct dlt_config {
     bool use_ext_hdr;
     bool use_msb_first;
@@ -60,6 +63,11 @@ struct dlt_config {
     dlt_config(const dlt_config &&) = delete;
     const dlt_config&& operator=(const dlt_config &&) = delete;
 
+    /**
+     * @brief - get dlt config instance
+     * 
+     * @return dlt_config* 
+     */
     static dlt_config *instance()
     {
         static dlt_config config;
@@ -90,7 +98,11 @@ struct dlt_encoded_msg {
 
 class dlt_service {
     public:
-        explicit dlt_service() noexcept;
+        explicit dlt_service(std::string &filename);
+        dlt_service(const dlt_service &) = delete;
+        const dlt_service &operator=(const dlt_service &) = delete;
+        dlt_service(const dlt_service &&) = delete;
+        const dlt_service &&operator=(const dlt_service &&) = delete;
         ~dlt_service();
 
         void run();
