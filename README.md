@@ -8,7 +8,7 @@ This repository implements AUTOSAR DLT protocol specification partially. This is
 2. dlt_service passes messages to a remote ip and port, that works. wireshark capture is displayed below.
 3. string based logging is only implemented. everything else is not implemented.
 
-![dlt_test](https://github.com/Hanzo-Labs/dlt_logger/blob/main/images/dlt_test.png)
+![dlt_test](https://github.com/devendranaga/dlt_logger/blob/main/images/dlt_test.png)
 
 
 ## configuration
